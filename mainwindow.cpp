@@ -269,6 +269,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
     saveSettings(); // Сохраняем настройки перед закрытием
     event->accept(); // Принимаем событие закрытия
 }
+<<<<<<< HEAD
 void MainWindow::on_addRow_clicked()
 {
     QTextCursor cursor = ui->textEdit->textCursor();
@@ -359,3 +360,36 @@ void MainWindow::on_rmRow_clicked()
         // Устанавливаем обновленное содержимое в textEdit
         ui->textEdit->setHtml(htmlContent);
 }
+=======
+
+void MainWindow::insertTable(int rows, int columns)
+{
+    QString htmlTable = "<table border='1' cellpadding='5' cellspacing='0'>";
+
+    for (int r = 0; r < rows; r++) {
+        htmlTable += "<tr>";
+        for (int c = 0; c < columns; c++) {
+            htmlTable += "<td>&nbsp;</td>"; // Пустая ячейка
+        }
+        htmlTable += "</tr>";
+    }
+    htmlTable += "</table>";
+
+    // Вставляем HTML-таблицу в textEdit
+    QTextCursor cursor = ui->textEdit->textCursor();
+    cursor.insertHtml(htmlTable);
+    ui->textEdit->setTextCursor(cursor); // Возвращаем курсор обратно
+}
+
+void MainWindow::on_insertTable_clicked()
+{
+    bool ok;
+    int rows = QInputDialog::getInt(this, tr("Rows"), tr("Number of rows:"), 2, 1, 100, 1, &ok);
+    if (!ok) return; // Пользователь отменил операцию
+
+    int columns = QInputDialog::getInt(this, tr("Columns"), tr("Number of columns:"), 3, 1, 100, 1, &ok);
+    if (!ok) return; // Пользователь отменил операцию
+
+    insertTable(rows, columns);
+}
+>>>>>>> 49c274cb8a0eb065dc34e9578b98a11244da8d07
