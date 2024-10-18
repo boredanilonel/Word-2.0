@@ -143,6 +143,15 @@ void MainWindow::on_openFile_clicked()
 }
 
 
+void MainWindow::on_copy_clicked()
+{
+    ui->textEdit->copy();
+}
+
+void MainWindow::on_pasteText_clicked()
+{
+    ui->textEdit->paste();
+}
 
 void MainWindow::on_undo_clicked()
 {
