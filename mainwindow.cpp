@@ -300,3 +300,81 @@ void MainWindow::on_insertTable_clicked()
 
     insertTable(rows, columns);
 }
+void MainWindow::on_addColumn_clicked()
+{
+    QTextCursor cursor = ui->textEdit->textCursor();
+        cursor.movePosition(QTextCursor::Start);
+
+        // Получаем текущее содержимое textEdit и ищем последнюю таблицу
+        QString htmlContent = ui->textEdit->toHtml();
+        QStringList tables = htmlContent.split("<table");
+
+        // Проверяем, есть ли хотя бы одна таблица
+        if (tables.length() < 2) {
+            QMessageBox::warning(this, tr("Warning"), tr("No table found to insert a column."));
+            return;
+        }
+
+        // Получаем последнюю таблицу
+        QString lastTable = tables.last();
+
+        // Определяем число существующих столбцов
+        int colCount = lastTable.count("<td");
+
+        // Изменяем HTML, добавляя новый столбец
+        QStringList rows = lastTable.split("<tr>");
+        for (int i = 0; i < rows.length(); i++) {
+            if (i > 0) {
+                rows[i].insert(rows[i].lastIndexOf("</td>"), "<td>&nbsp;</td>");
+            }
+        }
+
+        lastTable = rows.join("<tr>");
+        lastTable.replace("</table>", "</table>");
+        htmlContent.replace(tables.last(), lastTable);
+
+        // Обновляем содержимое textEdit
+        ui->textEdit->setHtml(htmlContent);
+}
+
+void MainWindow::on_rmClm_clicked()
+{
+    QTextCursor cursor = ui->textEdit->textCursor();
+
+        if (!cursor.currentTable()) {
+            QMessageBox::warning(this, tr("Warning"), tr("No table found to delete a column."));
+            return;
+        }
+
+        // Получаем текущее содержимое textEdit и ищем таблицы
+        QString htmlContent = ui->textEdit->toHtml();
+        QStringList tables = htmlContent.split("<table");
+
+        // Проверяем, есть ли хотя бы одна таблица
+        if (tables.length() < 2) {
+            QMessageBox::warning(this, tr("Warning"), tr("No table found to delete a column."));
+            return;
+        }
+
+        // Получаем последнюю таблицу
+        QString lastTable = tables.last();
+
+        // Изменяем HTML для удаления столбца
+        QStringList rows = lastTable.split("<tr>");
+        int colIndex = cursor.columnNumber(); // Получаем номер текущего столбца
+
+        for (int i = 1; i < rows.size(); i++) {
+            QStringList cells = rows[i].split("<td>");
+            if (colIndex < cells.size()) {
+                cells.removeAt(colIndex);
+            }
+            rows[i] = cells.join("<td>");
+        }
+
+        lastTable = rows.join("<tr>");
+        lastTable.replace("</table>", "</table>");
+        htmlContent.replace(tables.last(), lastTable);
+
+        // Обновляем содержимое textEdit
+        ui->textEdit->setHtml(htmlContent);
+}
