@@ -269,6 +269,98 @@ void MainWindow::closeEvent(QCloseEvent *event) {
     saveSettings(); // Сохраняем настройки перед закрытием
     event->accept(); // Принимаем событие закрытия
 }
+<<<<<<< HEAD
+void MainWindow::on_addRow_clicked()
+{
+    QTextCursor cursor = ui->textEdit->textCursor();
+
+        // Проверяем, находится ли курсор в таблице
+        if (!cursor.currentTable()) {
+            QMessageBox::warning(this, tr("Warning"), tr("No table found to insert a row."));
+            return;
+        }
+
+        // Получаем текущее содержимое textEdit и ищем последнюю таблицу
+        QString htmlContent = ui->textEdit->toHtml();
+        QStringList tables = htmlContent.split("<table");
+
+        // Проверяем, есть ли хотя бы одна таблица
+        if (tables.length() < 2) {
+            QMessageBox::warning(this, tr("Warning"), tr("No table found to insert a row."));
+            return;
+        }
+
+        // Получаем последнюю таблицу
+        QString lastTable = tables.last();
+
+        // Находим количество колонок
+        int columnCount = lastTable.count("<td");
+
+        // Создаем новую строку (по умолчанию пустая ячейка)
+        QString newRow = "<tr>";
+        for (int c = 0; c < columnCount; c++) {
+            newRow += "<td>&nbsp;</td>"; // Пустая ячейка
+        }
+        newRow += "</tr>";
+
+        // Вставляем новую строку перед закрывающим тегом </table>
+        lastTable.replace("</table>", newRow + "</table>");
+
+        // Обновляем HTML-содержимое
+        htmlContent.replace(tables.last(), lastTable);
+
+        // Устанавливаем обновленное содержимое в textEdit
+        ui->textEdit->setHtml(htmlContent);
+}
+
+void MainWindow::on_rmRow_clicked()
+{
+    QTextCursor cursor = ui->textEdit->textCursor();
+
+        // Проверяем, находится ли курсор в таблице
+        if (!cursor.currentTable()) {
+            QMessageBox::warning(this, tr("Warning"), tr("No table found to delete a row."));
+            return;
+        }
+
+        // Получаем текущее содержимое textEdit и ищем последнюю таблицу
+        QString htmlContent = ui->textEdit->toHtml();
+        QStringList tables = htmlContent.split("<table");
+
+        if (tables.length() < 2) {
+            QMessageBox::warning(this, tr("Warning"), tr("No table found to delete a row."));
+            return;
+        }
+
+        // Получаем последнюю таблицу
+        QString lastTable = tables.last();
+
+        // Находим строки таблицы
+        QStringList rows = lastTable.split("<tr>");
+
+        // Получаем индекс текущей строки
+        int currentRow = cursor.blockNumber(); // вычисляем текущую строку
+
+        // Убедимся, что строка корректна
+        if (currentRow < 1 || currentRow >= rows.size()) {
+            QMessageBox::warning(this, tr("Warning"), tr("Cannot delete this row."));
+            return;
+        }
+
+        // Удаляем строку по индексу
+        rows.removeAt(currentRow); // Удаляем строку
+
+        // Обновляем таблицу с новыми строками
+        lastTable = "<tr>" + rows.join("<tr>") + "</tr>";
+        lastTable.replace("</table>", "</table>");
+
+        // Обновляем HTML-содержимое
+        htmlContent.replace(tables.last(), lastTable);
+
+        // Устанавливаем обновленное содержимое в textEdit
+        ui->textEdit->setHtml(htmlContent);
+}
+=======
 
 void MainWindow::insertTable(int rows, int columns)
 {
@@ -300,6 +392,7 @@ void MainWindow::on_insertTable_clicked()
 
     insertTable(rows, columns);
 }
+<<<<<<< HEAD
 void MainWindow::on_addColumn_clicked()
 {
     QTextCursor cursor = ui->textEdit->textCursor();
@@ -378,3 +471,6 @@ void MainWindow::on_rmClm_clicked()
         // Обновляем содержимое textEdit
         ui->textEdit->setHtml(htmlContent);
 }
+=======
+>>>>>>> 49c274cb8a0eb065dc34e9578b98a11244da8d07
+>>>>>>> d68698dfbf216df7ca0dd2c8055eca7b1c0c8320
